@@ -15,3 +15,17 @@
 
 
 from imports import *
+
+def build_ansatz(n_qubits, parameters):
+    circuit = QuantumCircuit(n_qubits)
+
+    for i in range(n_qubits):
+        circuit.ry(parameters[i], i)
+
+    for i in range(n_qubits - 1):
+        circuit.cx(i, i+1)
+
+    for i in range(n_qubits):
+        circuit.ry(parameters[n_qubits+i], i)
+
+    return circuit

@@ -1,1 +1,1 @@
-"# Software_VQA_Maxcut" 
+Introductory Software Project - VQA MaxCut

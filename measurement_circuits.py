@@ -26,9 +26,12 @@ qc_measuring_only_qubit_0 = qc.measure(1)
     res = aer_simulator.run(qc_transpiled, noise_model=noise_model, shots=5)
 
     counts = res.result().get_counts()
-     { "00": 00, "01": 01, "10": 10, "11": 11 }
+     { "00": 0, "01": 1, "10": 2, "11": 3 }
   # find the lowest values in total_counts and add them to a filter
-  
+  Threshold_keep=(shots)/n_qubits
+if counts >=Threshold_keep{
+     res.result();
+}
   return correct_state_estimate
 
 correct_state_true = Max(counts)

@@ -17,6 +17,7 @@
 # After convergence: use StatevectorSampler to find the best bitstring.
 
 from imports import *
+from ansatz import build_ansatz
 
 def run_vqa(n_qubits: int, hamiltonian: SparsePauliOp):
     """

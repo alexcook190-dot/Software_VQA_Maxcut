@@ -1,33 +1,45 @@
-# ─────────────────────────────────────────────────────────────────────────────
-# SECTION 2 — GROUP B: Cost Hamiltonian
-# ─────────────────────────────────────────────────────────────────────────────
-#
-# Translate every graph edge (i, j) into the Pauli term ½(I − ZᵢZⱼ).
-#
-# Key points:
-#   • Qiskit orders qubits RIGHT-TO-LEFT in Pauli strings.
-#     For n=4, qubit 0 → rightmost character (index n-1-0 = 3 in the list).
-#   • For each edge build two SparsePauliOp terms and add them.
-#   • Use SparsePauliOp.sum(terms) at the end.
-#
-# Input : graph (networkx.Graph)
-# Output: SparsePauliOp  — the cost Hamiltonian H_C
+"""
+hamiltonian.py — GROUP B
+Build the MaxCut cost Hamiltonian as a SparsePauliOp.
+"""
+import numpy as np
+import networkx as nx
+from qiskit.quantum_info import SparsePauliOp
 
-from imports import *
 
-def build_hamiltonian(graph):
-    nodes = len(graph)
-    edges_list = list(graph.edges())
+def build_hamiltonian(graph: nx.Graph) -> SparsePauliOp:
+    """
+    Build the MaxCut cost Hamiltonian.
 
+    H_C = Σ_{(i,j) ∈ E}  ½(I − ZᵢZⱼ)
+
+    Each edge contributes +1 to the energy when its two endpoints
+    are in different partitions (edge is cut) and 0 otherwise.
+
+    Note: Qiskit orders qubits RIGHT-TO-LEFT in Pauli strings.
+          Qubit k → position (n − 1 − k) in the string.
+
+    Parameters
+    ----------
+    graph : nx.Graph
+
+    Returns
+    -------
+    SparsePauliOp
+    """
+    n = graph.number_of_nodes()
     terms = []
-    for edge in edges_list:
-        i, j = edge
 
-        # Create the Pauli string for the term ½(I − ZᵢZⱼ)
-        pauli_string = ['I'] * nodes
-        pauli_string[nodes - 1 - i] = 'Z'
-        pauli_string[nodes - 1 - j] = 'Z'
-        pauli_term = SparsePauliOp.from_list([(''.join(pauli_string), 0.5)])
-        terms.append(pauli_term)
+    for (i, j) in graph.edges():
+        # Build the ZZ Pauli string with Z at qubit positions i and j
+        pauli_list = ["I"] * n
+        pauli_list[n - 1 - i] = "Z"   # right-to-left ordering
+        pauli_list[n - 1 - j] = "Z"
+        zz_str = "".join(pauli_list)
 
-    return SparsePauliOp.sum(terms)
+        # ½(I − ZᵢZⱼ) = 0.5*I − 0.5*ZZ
+        zz_term = SparsePauliOp(zz_str,  coeffs=[-0.5])
+        id_term = SparsePauliOp("I" * n, coeffs=[ 0.5])
+        terms.append(zz_term + id_term)
+
+    return SparsePauliOp.sum(terms).simplify()

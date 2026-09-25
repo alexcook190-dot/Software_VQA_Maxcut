@@ -4,7 +4,7 @@ from ansatz import build_ansatz
 from hamiltonian import build_hamiltonian
 from classical_optimizer import run_vqa
 from assemble import decode_result
-from visualization import plot_convergence, visualize_cut
+from visualize import plot_convergence, visualize_cut
 
 
 def main():

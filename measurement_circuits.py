@@ -7,8 +7,9 @@ aer_simulator = AerSimulator()
 
 # assuming qc has no measurement gates applied
 def QST(qc):
-    # qc_measuring_all = qc.measure_all()
-  # qc_measuring_only_qubit_0 = qc.measure(0)
+     qc_measuring_all = qc.measure_all()
+   qc_measuring_only_qubit_0 = qc.measure(0)
+qc_measuring_only_qubit_0 = qc.measure(1)
   
   n_qubits = qc.num_qubits
   
